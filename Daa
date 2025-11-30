@@ -1,3 +1,5 @@
+1)
+
 def selection_sort(arr):
     n=len(arr)
     for i in range(n-1):
@@ -15,3 +17,388 @@ for _ in range(n):
 print("original list:",elements)
 sortes_list=selection_sort(elements)
 print("sorted list:",sortes_list)
+
+2)
+from itertools import permutations
+def calculate_distance(route, distances):
+ total_distance = 0
+ for i in range(len(route) - 1):
+ total_distance += distances[route[i]][route[i + 1]]
+ # return to the starting city
+ total_distance += distances[route[-1]][route[0]]
+ return total_distance
+def brute_force_tsp(distances, start):
+ n = len(distances)
+ cities = [i for i in range(n) if i != start] # exclude the start city
+min_distance = float('inf')
+shortest_route = None
+ print("\nAll Possible Routes and Their Distances:\n")
+ for perm in permutations(cities):
+ current_route = [start] + list(perm) + [start] # start and end at chosen city
+ current_distance = calculate_distance(current_route, distances)
+ print(f"Route {current_route} → Distance = {current_distance}")
+ if current_distance < min_distance:
+ min_distance = current_distance
+ shortest_route = current_route
+ return shortest_route, min_distance
+# ---------------- MAIN PROGRAM ----------------
+# Read number of cities
+n = int(input("Enter number of cities: "))
+# Read adjacency matrix
+print("Enter the distance matrix row by row (use spaces between values):")
+distances = []
+for i in range(n):
+ row = list(map(int, input(f"Row {i+1}: ").split()))
+ distances.append(row)
+# Read starting node
+start = int(input(f"Enter the starting node (0 to {n-1}): "))
+# Run TSP brute force
+route, total_distance = brute_force_tsp(distances, start)
+print("\nShortest Route:", route)
+print("Minimum Distance:", total_distance)
+
+3)
+
+from itertools import combinations
+def knapsack_bruteforce_all_subsets(weights, values, capacity):
+ n = len(values)
+ max_profit = 0
+ best_combination = None
+ print(f"\nKnapsack Capacity = {capacity}\n")
+ print("All Possible Subsets:")
+ # Generate all subsets (including empty set)
+for r in range(0, n+1):
+for subset in combinations(range(n), r):
+ total_weight = sum(weights[i] for i in subset)
+ total_value = sum(values[i] for i in subset)
+ items = [i+1 for i in subset] # 1-based item numbering
+ if total_weight <= capacity:
+ status = "Considered"
+ if total_value > max_profit:
+ max_profit = total_value
+ best_combination = (items, total_weight, total_value)
+ else:
+ status = "Not Considered (Exceeds Capacity)"
+ print(f"Items: {items}, Weight: {total_weight}, Value: {total_value} --> {status}")
+ # Display best solution
+ print("\nBest Combination Found:")
+ print(f"Items: {best_combination[0]}, Weight: {best_combination[1]}, Profit: 
+{best_combination[2]}")
+ print(f"\nMaximum Profit Achievable = {max_profit} (with Capacity = {capacity})")
+ return max_profit
+# ---------------- MAIN PROGRAM ----------------
+if __name__ == "__main__":
+ n = int(input("Enter number of items: "))
+ weights = []
+ values = []
+ print("\nEnter weights and values for each item:")
+for i in range(n):
+ w = int(input(f"Weight of item {i+1}: "))
+v = int(input(f"Value of item {i+1}: "))
+ weights.append(w)
+ values.append(v)
+ capacity = int(input("\nEnter knapsack capacity: "))
+ knapsack_bruteforce_all_subsets(weights, values, capacity)
+
+4)
+from collections import deque
+def dfs(graph, root):
+ visited = []
+ stack = [root]
+ while stack:
+ node = stack.pop()
+ if node not in visited:
+ visited.append(node)
+ stack.extend(graph[node]) # Push neighbors
+ return visited
+def bfs(graph, root):
+ visited = []
+ queue = deque([root])
+ while queue:
+ node = queue.popleft()
+ if node not in visited:
+ visited.append(node)
+ queue.extend(graph[node]) # Enqueue neighbors
+return visited
+if __name__ == "__main__":
+ graph = {}
+ # Take input from user
+ n = int(input("Enter number of vertices: "))
+print("Enter vertex labels (e.g., A, B, C):")
+ vertices = [input().strip() for _ in range(n)]
+ # Initialize adjacency list
+ for v in vertices:
+ graph[v] = []
+ e = int(input("Enter number of edges: "))
+ print("Enter edges in format: u v (means edge from u -> v)")
+ for _ in range(e):
+ u, v = input().split()
+ graph[u].append(v) # directed edge
+ # For undirected graph, also add: graph[v].append(u)
+ print("\nGraph (Adjacency List):")
+ for node, neighbors in graph.items():
+ print(f"{node} -> {neighbors}")
+ # Traversals
+ start_node = input("\nEnter the starting node for traversal: ").strip()
+ dfs_result = dfs(graph, start_node)
+ bfs_result = bfs(graph, start_node)
+ print("\nDFS Traversal starting from node", start_node, ":")
+ print(" -> ".join(dfs_result))
+ print("\nBFS Traversal starting from node", start_node, ":")
+print(" -> ".join(bfs_result))
+
+5)
+def find_min_max(arr, low, high):
+ # Case 1: Only one element
+ if low == high:
+ return arr[low], arr[low]
+ # Case 2: Two elements
+ elif high == low + 1:
+ if arr[low] < arr[high]:
+ return arr[low], arr[high]
+else:
+ return arr[high], arr[low]
+ # Case 3: More than two elements
+ else:
+ mid = (low + high) // 2
+ # Divide into two halves
+ min1, max1 = find_min_max(arr, low, mid)
+ min2, max2 = find_min_max(arr, mid + 1, high)
+ # Conquer: Combine results
+ return min(min1, min2), max(max1, max2)
+if __name__ == "__main__":
+ # Taking input from user
+ arr = list(map(int, input("Enter array elements separated by space: ").split()))
+ n = len(arr)
+ # Call function
+ minimum, maximum = find_min_max(arr, 0, n - 1)
+# Display results
+ print("\nArray:", arr)
+ print("Minimum element:", minimum)
+ print("Maximum element:", maximum)
+ 
+6)def quick_sort(arr):
+ # Base case: if array has 0 or 1 element, it is already sorted
+ if len(arr) <= 1:
+ return arr
+ # Step 1: Choose a pivot (here we take the last element)
+pivot = arr[-1]
+# Step 2: Partition the array into two halves
+ left = [x for x in arr[:-1] if x <= pivot] # elements <= pivot
+ right = [x for x in arr[:-1] if x > pivot] # elements > pivot
+ # Step 3: Recursively sort left and right, then combine
+ return quick_sort(left) + [pivot] + quick_sort(right)
+if __name__ == "__main__":
+ # Take input from user
+ arr = list(map(int, input("Enter integers separated by space: ").split()))
+ print("\nOriginal Array:", arr)
+ sorted_arr = quick_sort(arr)
+ print("Sorted Array (Ascending Order):", sorted_arr)
+
+7)
+def merge_sort(arr):
+ if len(arr) <= 1:
+ return arr
+ # Step 1: Divide - Find the middle index
+ mid = len(arr) // 2
+ # Step 2: Recursively sort left and right halves
+ left_half = merge_sort(arr[:mid])
+ right_half = merge_sort(arr[mid:])
+ # Step 3: Merge sorted halves
+ return merge(left_half, right_half)
+def merge(left, right):
+ merged = []
+ i = j = 0
+ # Compare elements from left and right, append smaller one
+while i < len(left) and j < len(right):
+ if left[i] <= right[j]:
+ merged.append(left[i])
+ i += 1
+ else:
+ merged.append(right[j])
+ j += 1
+ merged.extend(left[i:])
+ merged.extend(right[j:])
+ return merged
+if __name__ == "__main__":
+ print("Program 7: Merge Sort using Divide and Conquer\n")
+arr = list(map(int, input("Enter integers separated by space: ").split()))
+ print("\nOriginal Array:", arr)
+ sorted_arr = merge_sort(arr)
+ print("Sorted Array (Ascending Order):", sorted_arr)
+
+8)
+def create_matrix (n, edges):
+adj = [[0] *n for i in range(n)]
+ for u, v in edges:
+ adj[u][v] = adj[v][u] = 1 # Undirected graph
+ return adj
+n, e = map(int, input("Enter vertices and edges: ").split())
+edges = [tuple(map(int, input().split())) for _ in range(e)]
+adj = create_matrix(n, edges)
+print("\nAdjacency Matrix:")
+for row in adj:
+ print(*row)
+
+9)
+def create_matrix(n, edges, directed):
+adj = [[0]*n for i in range(n)]
+ for u, v in edges:
+ adj[u][v] = 1
+ if not directed:
+ adj[v][u] = 1
+ return adj
+def degrees(adj):
+n = len(adj)
+ indeg = [0]*n
+ outdeg = [0]*n
+for i in range(n):
+ for j in range(n):
+ if adj[i][j]:
+ outdeg[i] += 1
+ indeg[j] += 1
+ return indeg, outdeg
+# Input
+n, e = map(int, input("Enter vertices and edges: ").split())
+directed = input("Directed? (yes/no): ").lower() == "yes"
+edges = [tuple(map(int, input().split())) for i in range(e)]
+# Process
+adj = create_matrix(n, edges, directed)
+indeg, outdeg = degrees(adj)
+# Output
+print("\nAdjacency Matrix:")
+for row in adj: print(*row)
+print("\nVertex In-Degree Out-Degree")
+for i in range(n):
+ print(i, " "*(7-len(str(i))), indeg[i], " "*(9-len(str(indeg[i]))), outdeg[i]
+
+10)
+Program:
+def knapsack(wt, val, W):
+ ratio = [(val[i]/wt[i], wt[i], val[i]) for i in range(len(wt))]
+ ratio.sort(reverse=True)
+ total = 0
+ for r, w, v in ratio:
+ if W >= w:
+ W -= w; total += v
+else:
+ total += r*W; break
+ return total
+n = int(input("Enter items: "))
+wt = []; val = []
+for i in range(n):
+w, v = map(int, input(f"Weight Value {i+1}: ").split())
+ wt.append(w); val.append(v)
+W = int(input("Capacity: "))
+print("Max value:", knapsack(wt, val, W))
+
+11)
+def solve (n, row=0, cols= [], d1=set (), d2=set ()):
+if row==n:
+for c in cols:
+print("."*c+"Q"+"."*(n-c-1))
+print ()
+return
+for col in range(n):
+if col not in cols and row-col not in d1 and row+col not in d2:
+solve (n, row+1, cols+[col], d1|{row-col}, d2|{row+col})
+n=int (input ("Enter N: "))
+solve(n)
+
+12)
+Program:
+def subset_sum (arr, target, i=0, path= []):
+if sum(path) == target:
+print(path)
+return
+if i >= len(arr) or sum(path) > target:
+return
+subset_sum (arr, target, i+1, path+[arr[i]])
+subset_sum (arr, target, i+1, path)
+arr = list (map (int, input ("Enter elements: "). split ()))
+target = int (input ("Enter target sum: "))
+print ("Subsets with sum", target, ":")
+subset_sum (arr, target)
+
+13)
+def job_seq(jobs):
+ jobs. sort (key=lambda x: x[2], reverse=True) # Sort by profit
+ n = max(j[1] for j in jobs)
+ slot = [None]*n
+ for id,d,p in jobs:
+ for i in range(d-1,-1,-1):
+ if slot[i] is None:
+ slot[i] = id
+ break
+ print("Scheduled jobs:", [j for j in slot if j])
+n = int(input("Enter number of jobs: "))
+jobs = [tuple(input(f"Job {i+1} (id deadline profit): ").split()) for i in range(n)]
+jobs = [(j,int(d),int(p)) for j,d,p in jobs]
+job_seq(jobs)
+
+14)
+def obst (keys, freq):
+ n=len(keys)
+ dp= [[0] *n for i in range(n)]
+ for i in range(n): dp[i][i] =freq[i]
+ for l in range (2, n+1):
+ for i in range(n-l+1):
+ j=i+l-1; dp[i][j] =10**9
+ s=sum (freq[i: j+1])
+ for r in range(i, j+1):
+ left=dp[i][r-1] if r>i else 0
+ right=dp[r+1][j] if r<j else 0
+ dp[i][j]=min(dp[i][j],left+right+s)
+ return dp[0][n-1]
+keys=list(map(int,input("Keys: ").split()))
+freq=list(map(int,input("Freq: ").split()))
+print("Optimal BST cost:",obst(keys,freq))
+
+15)
+def prims(graph):
+ n=len(graph)
+ selected=[0]*n
+ selected[0]=1
+ edges=0; cost=0
+ print("Edge : Cost")
+ while edges<n-1:
+ m=10**9; x=y=0
+ for i in range(n):
+ if selected[i]:
+ for j in range(n):
+ if not selected[j] and 0<graph[i][j]<m:
+ m=graph[i][j]; x=i; y=j
+ print(f"{x}-{y} : {m}")
+ cost+=m; selected[y]=1; edges+=1
+ print("Minimum Cost:",cost)
+n=int(input("Enter number of vertices: "))
+print("Enter adjacency matrix (0 if no edge):")
+graph=[list(map(int,input().split())) for i in range(n)]
+prims(graph)
+
+16)
+def find (parent, i):
+ if parent[i]!=i: parent[i]=find(parent, parent[i])
+ return parent[i]
+def union (parent, rank, x, y):
+ xr, yr=find(parent, x),find(parent,y)
+ if rank[xr]<rank[yr]: parent[xr]=yr
+ elif rank[xr]>rank[yr]: parent[yr]=xr
+ else: parent[yr]=xr; rank[xr]+=1
+def kruskal (n, edges):
+ parent=list(range(n)); rank=[0]*n; mst=[]; cost=0
+ edges.sort(key=lambda x:x[2])
+ for u,v,w in edges:
+ if find(parent,u)!=find(parent,v):
+ union(parent,rank,u,v)
+ mst.append((u,v,w)); cost+=w
+ print("Edges in MST:")
+ for u,v,w in mst: print(f"{u}-{v} : {w}")
+print("Minimum Cost:",cost)
+n,e=map(int,input("Enter vertices and edges: ").split())
+edges=[]
+print("Enter edges (u v w):")
+for i in range(e):
+ u,v,w=map(int,input().split())
+ edges.append((u,v,w))
+kruskal(n,edges)
